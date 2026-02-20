@@ -157,6 +157,9 @@ __pycache__
 # IOLogger logs
 *_log.csv
 
+# Release binaries (attach via GitHub Releases UI)
+release/*.bin
+
 # Misc.
 *~
 *.orig
