@@ -68,11 +68,37 @@ jobs:
           ls -la firmware.bin
 
       - name: Create Release and upload firmware
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: "Прошивка Ender 3 + Sprite Pro, без зонда. Плата 4.2.2 (STM32F103RET6). Установка: firmware.bin на SD-карту."
-          files: firmware.bin
+        run: |
+          TAG="${{ github.ref_name }}"
+          REPO="${{ github.repository }}"
+          BODY="Прошивка Ender 3 + Sprite Pro, без зонда. Плата 4.2.2 (STM32F103RET6). Установка: firmware.bin на SD-карту."
+          echo "Creating release for tag $TAG"
+          RESP=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${REPO}/releases" \
+            -d "{\"tag_name\":\"${TAG}\",\"name\":\"Release ${TAG}\",\"body\":\"${BODY}\"}")
+          HTTP_BODY=$(echo "$RESP" | head -n -1)
+          HTTP_CODE=$(echo "$RESP" | tail -n 1)
+          echo "Create release response code: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "$HTTP_BODY" | jq . 2>/dev/null || echo "$HTTP_BODY"
+            exit 1
+          fi
+          UPLOAD_URL=$(echo "$HTTP_BODY" | jq -r '.upload_url' | sed 's/{?name,label}$//')
+          echo "Uploading firmware.bin to $UPLOAD_URL"
+          UPLOAD_RESP=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @firmware.bin \
+            "${UPLOAD_URL}?name=firmware.bin")
+          UPLOAD_CODE=$(echo "$UPLOAD_RESP" | tail -n 1)
+          echo "Upload response code: $UPLOAD_CODE"
+          if [ "$UPLOAD_CODE" != "201" ]; then
+            echo "$UPLOAD_RESP" | head -n -1 | jq . 2>/dev/null || true
+            exit 1
+          fi
+          echo "Release created and firmware.bin uploaded."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
