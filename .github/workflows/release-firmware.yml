@@ -69,11 +69,12 @@ jobs:
 
       - name: Create Release and upload firmware
         run: |
+          echo 'Прошивка для **Ender 3** + **Sprite Pro**, без зонда (только механические концевики).' > release_notes.md
+          echo '- Плата: Creality 4.2.2 (STM32F103RET6)' >> release_notes.md
+          echo '- MESH_BED_LEVELING, русский интерфейс' >> release_notes.md
+          echo '- Установка: скопировать firmware.bin на SD-карту и включить принтер.' >> release_notes.md
           gh release create "${{ github.ref_name }}" firmware.bin \
             --title "Release ${{ github.ref_name }}" \
-            --notes "Прошивка для **Ender 3** + **Sprite Pro**, без зонда (только механические концевики).
-          - Плата: Creality 4.2.2 (STM32F103RET6)
-          - MESH_BED_LEVELING, русский интерфейс
-          - Установка: скопировать firmware.bin на SD-карту и включить принтер."
+            --notes-file release_notes.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
