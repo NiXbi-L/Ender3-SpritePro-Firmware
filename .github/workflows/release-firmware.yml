@@ -68,16 +68,12 @@ jobs:
           ls -la firmware.bin
 
       - name: Create Release and upload firmware
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: |
-            Прошивка для **Ender 3** + **Sprite Pro**, без зонда (только механические концевики).
-            - Плата: Creality 4.2.2 (STM32F103RET6)
-            - MESH_BED_LEVELING, русский интерфейс
-            - Установка: скопировать `firmware.bin` на SD-карту и включить принтер.
-          files: firmware.bin
-          generate_release_notes: true
+        run: |
+          gh release create "${{ github.ref_name }}" firmware.bin \
+            --title "Release ${{ github.ref_name }}" \
+            --notes "Прошивка для **Ender 3** + **Sprite Pro**, без зонда (только механические концевики).
+          - Плата: Creality 4.2.2 (STM32F103RET6)
+          - MESH_BED_LEVELING, русский интерфейс
+          - Установка: скопировать firmware.bin на SD-карту и включить принтер."
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
