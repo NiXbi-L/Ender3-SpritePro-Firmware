@@ -23,25 +23,27 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Marlin preflight требует PlatformIO >= 6.1.1
       - name: Install PlatformIO
-        run: pip install platformio
+        run: pip install "platformio>=6.1.1"
 
       - name: Build firmware (STM32F103RE_creality)
-        run: pio run -e STM32F103RE_creality
+        run: |
+          pio run -e STM32F103RE_creality -v 2>&1 | tee build.log
+          echo "PIO exit code: $?"
 
       - name: Prepare firmware artifact
         run: |
-          BUILD_DIR=".pio/build/STM32F103RE_creality"
-          if [ ! -d "$BUILD_DIR" ]; then
-            echo "Build dir missing. Listing .pio:"
-            ls -la .pio 2>/dev/null || true
-            exit 1
-          fi
-          echo "Contents of $BUILD_DIR:"
-          ls -la "$BUILD_DIR"
-          BIN=$(find "$BUILD_DIR" -maxdepth 1 -name 'firmware-*.bin' 2>/dev/null | head -1)
+          echo "=== Looking for firmware .bin ==="
+          find .pio -name '*.bin' 2>/dev/null || true
+          find . -name 'firmware-*.bin' ! -path './.git/*' 2>/dev/null || true
+          echo "=== Contents of .pio/build ==="
+          ls -laR .pio/build 2>/dev/null || true
+          BIN=$(find .pio -name 'firmware-*.bin' 2>/dev/null | head -1)
+          [ -z "$BIN" ] && BIN=$(find .pio -name '*.bin' 2>/dev/null | head -1)
           if [ -z "$BIN" ]; then
-            echo "No firmware-*.bin found"
+            echo "No firmware-*.bin found in repo. Last 80 lines of build log:"
+            tail -80 build.log
             exit 1
           fi
           cp "$BIN" firmware.bin
