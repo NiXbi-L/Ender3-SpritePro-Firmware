@@ -1,43 +1,30 @@
-# Как выложить проект на GitHub и сделать релиз
+# Как сделать релиз
 
-## 1. Создать репозиторий на GitHub
+Релизы настроены через **GitHub Actions**: при пуше тега вида `v*` автоматически собирается прошивка и создаётся релиз с прикреплённым `firmware.bin`.
 
-1. Зайдите на [github.com](https://github.com) → **New repository**.
-2. Имя, например: `Ender3V2S1-20260106` или `Ender3-SpritePro-Firmware`.
-3. Выберите **Public**, **не** добавляйте README / .gitignore (репозиторий пустой).
-4. Нажмите **Create repository**.
+## Шаги
 
-## 2. Подключить remote и отправить код
+1. **Убедиться, что все изменения закоммичены и запушены:**
+   ```bash
+   git status
+   git push origin main
+   ```
 
-В папке проекта выполните (подставьте свой логин и имя репозитория):
+2. **Создать тег и отправить его на GitHub:**
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+3. **Готово.** На [Actions](https://github.com/NiXbi-L/Ender3-SpritePro-Firmware/actions) запустится workflow **Release Firmware**: он соберёт прошивку и создаст [Release](https://github.com/NiXbi-L/Ender3-SpritePro-Firmware/releases) с тегом `v1.0.0` и файлом `firmware.bin`.
+
+Следующие релизы — теги `v1.0.1`, `v1.1.0` и т.д.:
 
 ```bash
-git remote add origin https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПОЗИТОРИЯ.git
-git branch -M main
-git push -u origin main
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
-## 3. Обновить ссылки в README
+## Ручной релиз (без тега)
 
-В файле `README.md` замените `YOUR_GITHUB_USERNAME` на ваш логин GitHub в двух местах (ссылки на Releases и на клонирование). Затем:
-
-```bash
-git add README.md
-git commit -m "Fix GitHub username in README"
-git push
-```
-
-## 4. Создать релиз с бинарником прошивки
-
-1. На странице репозитория: **Releases** → **Create a new release**.
-2. **Choose a tag:** введите, например, `v1.0.0` → **Create new tag**.
-3. **Release title:** например, `v1.0.0 — Ender 3 + Sprite Pro, без зонда`.
-4. В **Description** можно вставить:
-   - Конфиг: Ender 3, плата 4.2.2, Sprite Pro, только механические концевики, MESH_BED_LEVELING, русский язык.
-   - Файл прошивки только для **STM32F103RET6** (Creality 4.2.2).
-5. В блок **Attach binaries** перетащите файл прошивки:
-   - из папки `release\`: `firmware-20260220-160049.bin`
-   - или из `.pio\build\STM32F103RE_creality\` после сборки `pio run -e STM32F103RE_creality`.
-6. Нажмите **Publish release**.
-
-Готово: репозиторий публичный, в Releases лежит бинарник прошивки для вашей конфигурации.
+Если нужно выложить бинарник вручную: соберите локально `pio run -e STM32F103RE_creality`, затем на странице репозитория **Releases** → **Create a new release** → укажите тег, описание и прикрепите файл из `.pio/build/STM32F103RE_creality/firmware-*.bin`.

@@ -36,7 +36,7 @@
 
 ## Установка прошивки
 
-1. Скачайте последний [Release](https://github.com/YOUR_GITHUB_USERNAME/Ender3V2S1-20260106/releases) и файл `firmware-*.bin`.
+1. Скачайте последний [Release](https://github.com/NiXbi-L/Ender3-SpritePro-Firmware/releases) и файл `firmware.bin`.
 2. Положите `.bin` на отформатированную SD-карту (FAT32), вставьте в принтер и включите питание.
 3. После прошивки переименуйте или удалите файл с карты (чтобы при следующем включении прошивка не ставилась заново).
 
@@ -48,8 +48,8 @@
 
 ```bash
 # Клонировать репозиторий
-git clone --recursive https://github.com/YOUR_GITHUB_USERNAME/Ender3V2S1-20260106.git
-cd Ender3V2S1-20260106
+git clone --recursive https://github.com/NiXbi-L/Ender3-SpritePro-Firmware.git
+cd Ender3-SpritePro-Firmware
 
 # Сборка прошивки под 4.2.2 (STM32F103RE)
 pio run -e STM32F103RE_creality
