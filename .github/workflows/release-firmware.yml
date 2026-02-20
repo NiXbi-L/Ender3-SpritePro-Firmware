@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write  # нужно для создания релиза и загрузки файла
+
 jobs:
   build-and-release:
     runs-on: ubuntu-22.04
@@ -28,13 +31,22 @@ jobs:
 
       - name: Prepare firmware artifact
         run: |
-          BIN=$(ls .pio/build/STM32F103RE_creality/firmware-*.bin 2>/dev/null | head -1)
+          BUILD_DIR=".pio/build/STM32F103RE_creality"
+          if [ ! -d "$BUILD_DIR" ]; then
+            echo "Build dir missing. Listing .pio:"
+            ls -la .pio 2>/dev/null || true
+            exit 1
+          fi
+          echo "Contents of $BUILD_DIR:"
+          ls -la "$BUILD_DIR"
+          BIN=$(find "$BUILD_DIR" -maxdepth 1 -name 'firmware-*.bin' 2>/dev/null | head -1)
           if [ -z "$BIN" ]; then
-            echo "Firmware .bin not found"
+            echo "No firmware-*.bin found"
             exit 1
           fi
           cp "$BIN" firmware.bin
           echo "Using: $BIN"
+          ls -la firmware.bin
 
       - name: Create Release and upload firmware
         uses: softprops/action-gh-release@v2
