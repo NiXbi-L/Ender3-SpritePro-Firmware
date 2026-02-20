@@ -25,6 +25,10 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
+## Артефакт сборки
+
+При каждом запуске workflow бинарник прошивки сохраняется как **Artifact**. Даже если шаг «Create Release» упадёт, скачать прошивку можно так: **Actions** → выберите нужный run → внизу страницы блок **Artifacts** → скачайте `firmware-<тег>.zip` и распакуйте `firmware.bin`.
+
 ## Ручной релиз (без тега)
 
 Если нужно выложить бинарник вручную: соберите локально `pio run -e STM32F103RE_creality`, затем на странице репозитория **Releases** → **Create a new release** → укажите тег, описание и прикрепите файл из `.pio/build/STM32F103RE_creality/firmware-*.bin`.
