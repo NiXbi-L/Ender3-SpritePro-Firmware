@@ -81,6 +81,10 @@ applet/
 *.a
 *.la
 *.lo
+# Keep bundled ProUI prebuilt static libraries in-repo
+!Marlin/lib/proui/
+!Marlin/lib/proui/**/
+!Marlin/lib/proui/**/*.a
 
 # Shared objects (inc. Windows DLLs)
 *.dll
