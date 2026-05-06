@@ -1951,8 +1951,8 @@
 // @section geometry
 
 // The size of the printable area
-#define X_BED_SIZE 245  // Usable bed
-#define Y_BED_SIZE 250  // Usable bed
+#define X_BED_SIZE 235  // Usable bed
+#define Y_BED_SIZE 235  // Usable bed
 
 // Travel limits: endstops 5mm off bed edges. Bed origin at (5,5).
 #define X_MIN_POS 5   // Left endstop: nozzle 5mm left of bed
