@@ -1951,15 +1951,16 @@
 // @section geometry
 
 // The size of the printable area
-#define X_BED_SIZE 235  // Usable bed
-#define Y_BED_SIZE 235  // Usable bed
+// Левый нижний угол стола в машинных координатах = (0, 0). Раньше там же физически было X≈1, Y≈15 (старая FW).
+#define X_BED_SIZE 229
+#define Y_BED_SIZE 228
 
-// Travel limits: endstops 5mm off bed edges. Bed origin at (5,5).
-#define X_MIN_POS 5   // Left endstop: nozzle 5mm left of bed
-#define Y_MIN_POS 5   // Back endstop: nozzle 5mm past back edge
+// Софт-лимиты: (0,0) — левый нижний угол стола; X 0…229, Y 0…228 (те же 229×228 мм, что и X/Y_BED_SIZE)
+#define X_MIN_POS 0
+#define Y_MIN_POS 0
 #define Z_MIN_POS 0
-#define X_MAX_POS 248 // Right: запас от механики, чтобы не упираться
-#define Y_MAX_POS 248 // Front: запас от механики, парковка до упора но без перебора
+#define X_MAX_POS 229
+#define Y_MAX_POS 228
 #define Z_MAX_POS 250
 //#define I_MIN_POS 0
 //#define I_MAX_POS 50
